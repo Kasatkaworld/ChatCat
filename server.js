@@ -2,6 +2,12 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+const db = require('./database')
+
+let messages = db.getMessages();
+
+db.addMessage(message, 1)
+
 const pathToIndex = path.join(__dirname, 'static', 'index.html');
 const indexHtmlFile = fs.readFileSync(pathToIndex);
 
