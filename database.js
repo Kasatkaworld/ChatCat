@@ -63,7 +63,46 @@ dbWrapper
                 `INSERT INTO message (content, author) VALUES(?, ?)`,
                 [msg, userId]
             );
+        },
+        login_exists(login, password, password_confirm){
+            try{
+                if( db.run(`SELECT * from user WHERE login='${login}'`)== null & password == password_confirm){
+                     db.run(
+                        `
+                        INSERT INTO user(login, password) Values("${login}", "${password}")
+                        );`
+                    );
+                }else{
+        
+                }
+            }
+            catch(dbError){
+                console.error(dbError);
+            }
         }
     }
 
 });
+// dbWrapper
+// .open({
+//     filename: dbFile,
+//     driver: sqlite3.Database
+// })
+// .then(async dBase =>{
+//     db = dBase;
+//     try{
+//         if(await db.run(`SELECT * from user WHERE login='?'`)== null){
+//             await db.run(
+//                 `
+//                 INSERT INTO user(login, password) Values("?", "?")
+//                 );`
+//             );
+//         }else{
+
+//         }
+//     }
+//     catch(dbError){
+//         console.error(dbError);
+//     }
+
+// });
