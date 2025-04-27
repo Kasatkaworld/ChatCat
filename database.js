@@ -4,6 +4,7 @@ const dbFile = "./chat.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const dbWrapper = require("sqlite");
+const crypto = require("crypto")
 let db;
 
 dbWrapper
@@ -64,7 +65,7 @@ dbWrapper
                 [msg, userId]
             );
         },
-        login_exists(login, password, password_confirm){
+        login_exists: async(login, password, password_confirm) => {
             try{
                 if( db.run(`SELECT * from user WHERE login='${login}'`)== null & password == password_confirm){
                      db.run(
@@ -79,7 +80,18 @@ dbWrapper
             catch(dbError){
                 console.error(dbError);
             }
+        },
+        getAuthToken: async (user) => {
+            const candidate = await db.all(`SELECT * FROM user WHERE login = ?`, [user.login]);
+            if(!candidate.length){
+                throw 'Wrong login';
+            }
+            if(candidate[0].password !== user.password){
+                throw 'Wrong password';
+            }
+            token = user_id + '.' + login + '.' + crypto.randomBytes(20).toString('hex');
         }
+
     }
 
 });
