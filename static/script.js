@@ -2,7 +2,11 @@
 const form = document.getElementById('form1')
 const input = document.getElementById('input')
 const messages = document.getElementById('messages')
-const socket = io();
+const socket = io({
+    auth: {
+        cookie: document.cookie
+    }
+});
 
 // socket.emit('event_name', data);
 
@@ -16,9 +20,11 @@ form.addEventListener('submit', function(e) {
         input.value = '';
     }
 })
-socket.on('message', (message)=>{
- messages.innerHTML += `<li>${message}</li>`
+socket.on('message', (message, Nickname, id)=>{
+    messages.innerHTML += `<li>${Nickname}: ${message}</li>`
+    // db.addMessage(message, id)
 })
+
 window.scrollTo(0, document.body.scrollHeight);
 // const io = new Server(server);
 // io.emit('event_name', data);
@@ -27,4 +33,4 @@ window.scrollTo(0, document.body.scrollHeight);
 
 // let messages = db.getMessages();
 
-// db.addMessage(message, 1)
+//db.addMessage(message, 1)

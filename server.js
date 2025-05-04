@@ -124,10 +124,19 @@ io.on('connection', (socket) => {
     let userNickname = 'user'
     console.log('a user conected. id - ' + socket.id);
     socket.on('new_message', (message)=>{
-        io.emit('message', message)
+        io.emit('message', message,userNickname,socket.id)
         console.log(message);
     })
 });
+io.use((socket, next) =>{
+    const cookie = socket.handshake.auth.cookie;
+    const credentials = getCredentionals(cookie);
+    if(!credentials){
+        next(new Error("no auth"));
+    }
+    socket.credentials = credentials;
+    next();
+})
 // io.emit('event_name', data);
 
 // socket.emit('event_name', data);
