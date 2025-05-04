@@ -25,6 +25,9 @@ const scriptFile = fs.readFileSync(pathToScript);
 const pathToAuthScript = path.join(__dirname, 'static', 'auth.js');
 const AuthScriptFile = fs.readFileSync(pathToAuthScript);
 
+const pathToDBScript = path.join(__dirname, 'database.js');
+const DBScriptFile = fs.readFileSync(pathToDBScript);
+
 const pathToStyle = path.join(__dirname, 'static', 'style.css');
 const styleFile = fs.readFileSync(pathToStyle);
 
@@ -73,6 +76,9 @@ const server = http.createServer((req, res) => {
         case '/auth.js':
             return res.end(AuthScriptFile);
             break;
+        case '/database.js':
+            return res.end(DBScriptFile);
+            break;
         case '/api/register':
             let data = '';
             req.on('data', function(chunk){
@@ -83,7 +89,7 @@ const server = http.createServer((req, res) => {
                     console.log(data);
                     return res.end();
                 }else{
-                    //db.login_exists(data.login, data.password, data.password_confirm);
+                    db.login_exists(data.login, data.password, data.password_confirm);
                     return res.end();
                 }
                 
@@ -99,7 +105,7 @@ const server = http.createServer((req, res) => {
                 try{
                    const user = JSON.parse(data_login);
                    console.log(user)
-                    const token = 0//await db.getAuthToken(user);
+                    const token =  db.getAuthToken(user);
                     validAuthTokens.push(token);
                     res.writeHead(200);
                     res.end(token);
@@ -123,9 +129,10 @@ const io = new Server(server);
 io.on('connection', (socket) => {
     let userNickname = 'user'
     console.log('a user conected. id - ' + socket.id);
-    socket.on('new_message', (message)=>{
+    socket.on('new_message', (message, nickname)=>{
+        userNickname = nickname
         io.emit('message', message,userNickname,socket.id)
-        console.log(message);
+        console.log(userNickname+": "+message);
     })
 });
 io.use((socket, next) =>{

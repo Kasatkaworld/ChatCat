@@ -11,9 +11,6 @@
   "engines": {
     "node": "14.x"
   },
-  "repository": {
-    "url": "https://github.com/Kasatkaworld/ChatCat"
-  },
   "author": "",
   "license": "ISC",
   "dependencies": {
