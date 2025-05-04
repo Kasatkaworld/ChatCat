@@ -2,6 +2,8 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
+
+
 const db = require('./database.js')
 
 //let messages = db.getMessages();
@@ -48,6 +50,8 @@ function getCredentionals(c = ''){
     if(!user_id || !login) return null;
     return {user_id, login};
 }
+
+
 
 const server = http.createServer((req, res) => {
     switch(req.url){
@@ -112,4 +116,22 @@ const server = http.createServer((req, res) => {
             
     }
 });
+const { Server } = require('socket.io');
+
+const io = new Server(server);
+
+io.on('connection', (socket) => {
+    let userNickname = 'user'
+    console.log('a user conected. id - ' + socket.id);
+    socket.on('new_message', (message)=>{
+        io.emit('message', message)
+        console.log(message);
+    })
+});
+// io.emit('event_name', data);
+
+// socket.emit('event_name', data);
+
+
+
 server.listen(3000);
