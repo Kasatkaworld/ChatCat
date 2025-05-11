@@ -1,10 +1,10 @@
 const fs = require('fs');
-
 const dbFile = "./chat.db";
 const exists = fs.existsSync(dbFile);
 const sqlite3 = require("sqlite3").verbose();
 const dbWrapper = require("sqlite");
-const crypto = require("crypto")
+const crypto = require("crypto");
+const { log } = require('console');
 let db;
 
 dbWrapper
@@ -33,7 +33,7 @@ dbWrapper
                 `
                 CREATE TABLE message(
                     message_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    message TEXT,
+                    content TEXT,
                     autor INTEGER,
                     FOREIGN KEY (autor) REFERENCES user(user_id)
                 );`
@@ -60,10 +60,12 @@ dbWrapper
             
         },
         addMessage: async (msg, userId) => {
+            console.log("working")
             await db.run(
                 `INSERT INTO message (content, author) VALUES(?, ?)`,
                 [msg, userId]
             );
+            
         },
         login_exists: async(login, password, password_confirm) => {
             try{

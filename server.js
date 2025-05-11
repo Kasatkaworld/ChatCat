@@ -2,11 +2,9 @@ const http = require('http');
 const fs = require('fs');
 const path = require('path');
 
-
-
-const db = require('./database.js')
-
+const db = import('./database.js')
 //let messages = db.getMessages();
+console.log(db)
 let validAuthTokens = []
 //db.addMessage(message, 1)
 
@@ -131,19 +129,22 @@ io.on('connection', (socket) => {
     console.log('a user conected. id - ' + socket.id);
     socket.on('new_message', (message, nickname)=>{
         userNickname = nickname
+        console.log(db)
+        db.addMessage(message, socket.id)
         io.emit('message', message,userNickname,socket.id)
         console.log(userNickname+": "+message);
     })
 });
-io.use((socket, next) =>{
-    const cookie = socket.handshake.auth.cookie;
-    const credentials = getCredentionals(cookie);
-    if(!credentials){
-        next(new Error("no auth"));
-    }
-    socket.credentials = credentials;
-    next();
-})
+// io.use((socket, next) =>{
+//     const cookie = socket.handshake.auth.cookie;
+//     const credentials = getCredentionals(cookie);
+//     if(!credentials){
+//         next(new Error("no auth"));
+//     }
+//     socket.credentials = credentials;
+//     next();
+// })
+
 // io.emit('event_name', data);
 
 // socket.emit('event_name', data);
